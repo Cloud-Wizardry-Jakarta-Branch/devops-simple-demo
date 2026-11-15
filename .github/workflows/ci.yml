@@ -111,7 +111,7 @@ jobs:
     # Job ini hanya jalan kalau repo variable ENABLE_PAGES bernilai true.
     # Tanpa variabel itu, pipeline tetap hijau dan tidak ada deploy.
     if: >-
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       github.ref == 'refs/heads/main' &&
       vars.ENABLE_PAGES == 'true'
     needs: build
@@ -122,7 +122,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - name: Ambil artefak build
         uses: actions/download-artifact@v8
@@ -138,6 +138,16 @@ jobs:
         with:
           path: dist
 
+      # deploy-pages membaca daftar artefak lewat API tepat setelah artefak diunggah.
+      # Kadang API belum terindeks, dan langkah ini gagal dengan pesan
+      # "No artifacts named github-pages were found". Percobaan kedua biasanya lolos,
+      # jadi kegagalan langkah ini ditangkap dan diulang sekali.
       - name: Deploy
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+
+      - name: Deploy ulang bila artefak belum terindeks
+        if: steps.deployment.outcome == 'failure'
+        id: deployment_retry
         uses: actions/deploy-pages@v5
