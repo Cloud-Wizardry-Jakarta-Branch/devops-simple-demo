@@ -1,0 +1,129 @@
+name: CI
+
+# Dua jalur pemicu, dan keduanya sengaja dibedakan:
+# - pull_request  -> CI berjalan, tidak ada deploy
+# - push ke main  -> CI berjalan, lalu CD (kalau diaktifkan)
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  quality:
+    name: Lint dan test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependensi
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:ci
+
+  build:
+    name: Build
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependensi
+        run: npm ci
+
+      - name: Build aplikasi
+        run: npm run build
+        env:
+          VITE_BUILD_ID: ${{ github.sha }}
+
+      - name: Pastikan hasil build ada
+        run: |
+          test -f dist/index.html || { echo "dist/index.html tidak ditemukan"; exit 1; }
+          du -sh dist
+
+      - name: Unggah artefak
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist
+          retention-days: 7
+
+      # Nilai di bawah diambil dari environment variable bawaan runner, bukan dari
+      # interpolasi ${{ }} yang bisa berisi teks bebas. Tidak ada input pengguna
+      # yang masuk ke perintah shell di sini.
+      - name: Ringkasan
+        run: |
+          {
+            echo "### Build selesai"
+            echo ""
+            echo "| Item | Nilai |"
+            echo "| --- | --- |"
+            echo "| Commit | \`${GITHUB_SHA:0:7}\` |"
+            echo "| Branch | \`${GITHUB_REF_NAME}\` |"
+            echo "| Node | ${NODE_VERSION} |"
+            echo "| Artefak | dist-${GITHUB_SHA} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Deploy ke GitHub Pages
+    # Job ini hanya jalan kalau repo variable ENABLE_PAGES bernilai true.
+    # Tanpa variabel itu, pipeline tetap hijau dan tidak ada deploy.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      vars.ENABLE_PAGES == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Ambil artefak build
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist
+
+      - name: Siapkan Pages
+        uses: actions/configure-pages@v5
+
+      - name: Unggah ke Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
