@@ -61,7 +61,7 @@ Tiga hal yang sengaja dipasang supaya enak dijelaskan:
 
 ## Demo 8 menit di kelas
 
-Ucapan boleh bebas, urutannya yang penting.
+Urutan demo
 
 1. **Tunjukkan aplikasinya lebih dulu** (`make preview`). Klik dua tahap, tunjukkan panel detailnya berubah.
 2. **Buka repo di GitHub**, tunjukkan `.github/workflows/ci.yml` dan tiga nama job-nya.
@@ -70,10 +70,6 @@ Ucapan boleh bebas, urutannya yang penting.
 5. **Tunjukkan `build` menunggu `quality`**, lalu artefak `dist-<sha>` muncul setelah selesai.
 6. **Merge pull request.** Karena `ENABLE_PAGES` belum diisi, job deploy dilewati, dan itu justru bahan penjelasan yang bagus tentang job bersyarat.
 7. **Isi variabel `ENABLE_PAGES` dengan `true`**, merge satu perubahan kecil lagi, lalu tunjukkan job deploy berjalan dan URL Pages muncul.
-
-Kalimat yang bisa dipakai saat langkah 4. Ini yang di slide disebut CI, dan yang sedang berjalan di layar adalah lint, build, dan test. Tidak ada yang menyentuh server produksi, karena pull request hanya memicu pemeriksaan.
-
-Kalimat saat langkah 5. Job build tidak mulai sebelum quality hijau. Di LKS, urutan ini yang mencegah image dibangun dari kode yang gagal tes.
 
 ## Menyiapkan repo di GitHub
 
@@ -91,8 +87,6 @@ Lalu di halaman repo:
 3. **Settings, Pages.** Pilih source `GitHub Actions` kalau langkah 2 dikerjakan.
 
 ## Latihan membuat CI merah lalu hijau
-
-Bagian ini yang paling sering diminta peserta, karena mereka baru percaya setelah melihat pipeline gagal.
 
 ```bash
 # 1. rusak satu tes
