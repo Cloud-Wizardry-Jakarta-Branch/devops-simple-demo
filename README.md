@@ -1,6 +1,6 @@
 # DevOps Simple Demo
 
-Aplikasi React kecil untuk mendemokan alur CI/CD di GitHub Actions, dipakai di sesi Chapter 1 pelatihan LKS Cloud Computing. 
+Aplikasi React kecil untuk mendemokan alur CI/CD di GitHub Actions, dipakai di sesi Chapter 1 pelatihan LKS Cloud Computing. Perubahaan dari DEV
 
 ## Isi repo
 
