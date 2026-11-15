@@ -53,6 +53,8 @@ Workflow `.github/workflows/ci.yml` punya tiga job.
 | `build` | setelah `quality` hijau | `npm run build`, cek `dist/index.html`, unggah artefak | Tabel ringkasan, artefak `dist-<sha>` yang bisa diunduh |
 | `deploy` | push ke main, hanya kalau variabel `ENABLE_PAGES` bernilai `true` | unduh artefak, unggah ke GitHub Pages, deploy | URL environment di halaman run |
 
+Satu jebakan yang sudah ditangani dan layak diceritakan ke peserta. GitHub Pages menyajikan project site di `/<nama-repo>/`, bukan di akar domain. Kalau `base` Vite dibiarkan `/`, `index.html` akan meminta `/assets/index-xxx.js` dan browser menerima 404 untuk semua berkas, walau isi `dist` lengkap. Karena itu `base` dihitung dari `GITHUB_REPOSITORY` saat build di Actions, dan job build menolak artefak yang base-nya salah.
+
 Tiga hal yang sengaja dipasang supaya enak dijelaskan:
 
 1. `pull_request` dan `push` dipisah, jadi CI dan CD kelihatan bedanya di satu file.
@@ -118,4 +120,5 @@ Yang perlu disebut setelah latihan ini. Pipeline tidak pernah "salah sendiri". Y
 | Error `Cannot find module jsdom` | Dependensi dev tidak terpasang | jalankan `npm ci`, bukan `npm install --omit=dev` |
 | Tes lulus lokal, gagal di CI | Versi Node berbeda | samakan dengan `.nvmrc`, atau cek `NODE_VERSION` di workflow |
 | Halaman kosong setelah build | Berkas dibuka lewat `file://` | pakai `make preview`, bukan membuka `dist/index.html` langsung |
+| Semua JS dan CSS 404 di GitHub Pages | `base` Vite tidak mengikuti nama repo, jadi aset diminta dari `/assets/` padahal situs disajikan di `/<nama-repo>/` | `vite.config.js` menghitung `base` dari `GITHUB_REPOSITORY`; job build juga memeriksa ini sebelum deploy |
 | Job deploy dilewati | Variabel `ENABLE_PAGES` belum diisi | isi variabel, lalu jalankan ulang workflow |

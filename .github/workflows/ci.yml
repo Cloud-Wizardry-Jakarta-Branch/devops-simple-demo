@@ -70,6 +70,19 @@ jobs:
           test -f dist/index.html || { echo "dist/index.html tidak ditemukan"; exit 1; }
           du -sh dist
 
+      # GitHub Pages menyajikan project site di /<nama-repo>/, bukan di akar domain.
+      # Tanpa base yang benar, index.html meminta /assets/... dan semua berkas 404.
+      # Langkah ini menguji artefaknya, bukan status build-nya.
+      - name: Cek base path untuk Pages
+        run: |
+          EXPECTED="/${GITHUB_REPOSITORY#*/}/assets/"
+          echo "base yang diharapkan: $EXPECTED"
+          grep -o 'src="[^"]*"\|href="[^"]*"' dist/index.html
+          if ! grep -q "$EXPECTED" dist/index.html; then
+            echo "::error::Aset tidak memakai base $EXPECTED. Halaman akan 404 di GitHub Pages."
+            exit 1
+          fi
+
       - name: Unggah artefak
         uses: actions/upload-artifact@v7
         with:
