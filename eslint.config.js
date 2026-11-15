@@ -22,4 +22,15 @@ export default defineConfig([
       },
     },
   },
+  {
+    // Berkas konfigurasi berjalan di Node, jadi butuh process, __dirname, dan kawan-kawan.
+    files: ['*.config.js', 'scripts/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      globals: { ...globals.node },
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+  },
 ])
