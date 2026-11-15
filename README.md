@@ -1,8 +1,6 @@
 # DevOps Simple Demo
 
-Aplikasi React kecil untuk mendemokan alur CI/CD di GitHub Actions, dipakai di sesi Chapter 1 pelatihan LKS Cloud Computing. Aplikasi yang tampil bukan kalkulator atau daftar tugas, melainkan papan enam tahap pipeline yang sama dengan slide 17 di deck. Jadi saat demo berjalan, peserta melihat objek yang sedang dijelaskan.
-
-Halaman dibangun oleh pipeline. Setiap kali workflow selesai, artefak `dist` diunggah dan bisa diunduh dari halaman run, sehingga kalimat "artefak ini yang nanti dikirim ke Lambda atau Amplify" punya bukti di layar.
+Aplikasi React kecil untuk mendemokan alur CI/CD di GitHub Actions, dipakai di sesi Chapter 1 pelatihan LKS Cloud Computing. 
 
 ## Isi repo
 
