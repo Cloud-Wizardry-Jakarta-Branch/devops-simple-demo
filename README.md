@@ -122,3 +122,5 @@ Yang perlu disebut setelah latihan ini. Pipeline tidak pernah "salah sendiri". Y
 | Halaman kosong setelah build | Berkas dibuka lewat `file://` | pakai `make preview`, bukan membuka `dist/index.html` langsung |
 | Semua JS dan CSS 404 di GitHub Pages | `base` Vite tidak mengikuti nama repo, jadi aset diminta dari `/assets/` padahal situs disajikan di `/<nama-repo>/` | `vite.config.js` menghitung `base` dari `GITHUB_REPOSITORY`; job build juga memeriksa ini sebelum deploy |
 | Job deploy dilewati | Variabel `ENABLE_PAGES` belum diisi | isi variabel, lalu jalankan ulang workflow |
+| Deploy gagal dengan "Multiple artifacts named github-pages" | Job deploy diulang, jadi ada dua artefak `github-pages` di satu run | hapus artefak lama di halaman run, lalu jalankan ulang seluruh workflow |
+| Deploy gagal dengan "No artifacts named github-pages" | Artefak belum terindeks saat `deploy-pages` membacanya | langkah deploy di workflow sudah punya satu percobaan ulang otomatis |
