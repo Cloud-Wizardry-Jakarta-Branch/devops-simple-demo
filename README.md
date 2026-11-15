@@ -61,18 +61,6 @@ Tiga hal yang sengaja dipasang supaya enak dijelaskan:
 2. `needs: quality` pada job `build` menunjukkan job tidak berjalan paralel sembarangan, melainkan menunggu gerbang mutu.
 3. `concurrency` membatalkan run lama di branch yang sama, contoh nyata dari hemat waktu dan biaya runner.
 
-## Demo 8 menit di kelas
-
-Urutan demo
-
-1. **Tunjukkan aplikasinya lebih dulu** (`make preview`). Klik dua tahap, tunjukkan panel detailnya berubah.
-2. **Buka repo di GitHub**, tunjukkan `.github/workflows/ci.yml` dan tiga nama job-nya.
-3. **Jalankan `make demo`.** Skrip membuat branch, mengubah satu subjudul, dan commit.
-4. **Push dan buka pull request.** Di tab Checks, tunjukkan `quality` berjalan sambil membaca log langkah per langkah.
-5. **Tunjukkan `build` menunggu `quality`**, lalu artefak `dist-<sha>` muncul setelah selesai.
-6. **Merge pull request.** Karena `ENABLE_PAGES` belum diisi, job deploy dilewati, dan itu justru bahan penjelasan yang bagus tentang job bersyarat.
-7. **Isi variabel `ENABLE_PAGES` dengan `true`**, merge satu perubahan kecil lagi, lalu tunjukkan job deploy berjalan dan URL Pages muncul.
-
 ## Menyiapkan repo di GitHub
 
 ```bash
